@@ -1,3 +1,7 @@
+# Dependencies
+1. Install flask
+2. Install sqlalchemy
+3. Install 
 # Catalog
 
 1. run python database_setup.py 

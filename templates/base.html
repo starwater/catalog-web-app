@@ -3,90 +3,61 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
-  <title> {% block title %}{% endblock %} -- EscortLog </title>
-  <meta name="author" content="">
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="google-signin-client_id" content="885186270693-o06e8uhqahsicfhac28pfjo774a1e84v.apps.googleusercontent.com">
+    <meta charset="utf-8">
+    <title> {% block title %}{% endblock %} -- EscortLog </title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="660933188717-v3iboan709hhamvjfmhe10a54t0pm755.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+    <!--suppress HtmlUnknownTarget -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
+<!--for sign out purpose base on auth2 properties-->
+<!--<script>-->
+<!--    function start() {-->
+<!--        gapi.load('auth2', function() {-->
+<!--            auth2 = gapi.auth2.init({-->
+<!--                client_id: '660933188717-v3iboan709hhamvjfmhe10a54t0pm755.apps.googleusercontent.com'-->
+<!--            })-->
+<!--        })-->
+<!--    }-->
+<!--</script>-->
+<!--end of init script-->
+
 <body>
+    <!--nav bar-->
+    <div class="topnav">
+        <a class="active" href=" {{ url_for('index') }} ">Home</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
 
-        <div class="topnav">
-      <a class="active" href=" {{ url_for('index') }} ">Home</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-
-<!--            google sign in-->
-            <div class="g-signin2" data-onsuccess="onSignIn"></div>
-            {% if 'username' in flask_session: %}
-                <a href=" {{ url_for('logout') }} " onclick="signOut();">Sign out</a>
-            {% else: %}
-                <a href=" {{ url_for('login') }} ">Login</a>
-                <a href=" {{ url_for('register') }} ">Register</a>
+<!--        <a href=" {{ url_for('logout') }} " onclick="signOut();">Sign out</a>-->
+        {% if 'username' in flask_session: %}
+            <a href=" {{url_for('logout')}} " onclick="signOut();">Sign out</a>
+        {% else: %}
+            <a href=" {{ url_for('login') }} ">Login</a>
+            <a href=" {{ url_for('register') }} ">Register</a>
             {% endif %}
     </div>
-    <!-- GOOGLE PLUS SIGN IN-->
+`   <!--end of nav-->
 
+    <!--     flash message   -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages: %}
+        <li><strong> {{message}} </strong></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    <!--end of flash message-->
 
-          <div id="signinButton">
-          <span class="g-signin"
-            data-scope="openid email"
-            data-clientid="13140951618-15nik769cellkubaqnjk5facdib2dh4d.apps.googleusercontent.com"
-            data-redirecturi="postmessage"
-            data-accesstype="offline"
-            data-cookiepolicy="single_host_origin"
-            data-callback="signInCallback"
-            data-approvalprompt="force">
-          </span>
-        </div>
-
-<div id="result"></div>
-
-<script>
-function signInCallback(authResult) {
-  if (authResult['code']) {
-    // Hide the sign-in button now that the user is authorized
-    $('#signinButton').attr('style', 'display: none');
-    // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
-    $.ajax({
-      type: 'POST',
-      url: '/gconnect?state={{STATE}}',
-      processData: false,
-      data: authResult['code'],
-      contentType: 'application/octet-stream; charset=utf-8',
-      success: function(result) {
-        // Handle or verify the server response if necessary.
-        if (result) {
-          $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
-         setTimeout(function() {
-          window.location.href = "/restaurant";
-         }, 4000);
-
-      } else if (authResult['error']) {
-    console.log('There was an error: ' + authResult['error']);
-  } else {
-        $('#result').html('Failed to make a server-side call. Check your configuration and console.');
-         }
-      }
-
-  }); } }
-</script>
-
-<!--     flash message   -->
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul>
-            {% for message in messages: %}
-            <li><strong> {{message}} </strong></li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
-
-  <p>
+    <!--web data-->
+    <p>
       {% block catalog %}{% endblock %}
       {% block items %}{% endblock %}
       {% block item_desc %}{% endblock %}
@@ -94,11 +65,61 @@ function signInCallback(authResult) {
       {% block delete %} {% endblock %}
       {% block register %} {% endblock %}
       {% block login %} {% endblock %}
+    </p>
+    <!--end of web data-->
+        <br><br><br>
 
-  </p>
-      <script>
-      function onSignIn(googleUser) {
-        // Useful data for your client-side scripts:
+    <!--testing session item-->
+    <div>
+        {% if 'username' in flask_session: %} <br>
+        Email: {{ flask_session['email'] }} <br>
+        Name: {{ flask_session['username'] }} <br>
+        <img src="{{ flask_session['picture'] }}" alt="">
+        {% endif %}
+    </div>
+    <!--end of testing session-->
+<!--    <a href="https://github.com/login/oauth/authorize?client_id=fd2645d1ec82d58f518c">github sign in</a>-->
+<!--grant offline access-->
+<!--<script>-->
+<!--    $('#signinButton').click(function() {-->
+<!--        auth2.grantOfflineAccess().then(signInCallback);-->
+<!--    });-->
+<!--</script>-->
+<!--end of pre script-->
+
+<!--callback script, retrun & send code to backend for verification-->
+<!--<script>-->
+<!--function signInCallback(authResult) {-->
+<!--    if (authResult['code']) {-->
+<!--    // Hide the sign-in button now that the user is authorized, for example:-->
+<!--    $('#signinButton').attr('style', 'display: none');-->
+<!--    // Send the code to the server-->
+<!--    $.ajax({-->
+<!--        type: 'POST', //post method to send code to backend-->
+<!--        url: '/gconnect?state={{STATE}}',  //correspond to gconnect for code exchange-->
+<!--        headers: {'X-Requested-With': 'XMLHttpRequest'},   // add header to avoid cfsr attack-->
+<!--        contentType: 'application/octet-stream; charset=utf-8',-->
+<!--        processData: false,-->
+<!--        data: authResult['code'],-->
+<!--        success: function(result) {-->
+<!--            if (result) {-->
+<!--                $('#result').html('Login Successful!</br>' + result + '</br>Redirecting...')-->
+<!--                setTimeout(function() {window.location.href = '/catalog/'}, 4000);-->
+<!--            } else if (authResult['error']) {-->
+<!--                console.log('There was an error: ' + authResult['error']);-->
+<!--            } else {$('#result').html('Failed to make a server-side call. Check your configuration and console.');}-->
+<!--        }-->
+<!--    });-->
+<!--    } else {-->
+<!--    // There was an error.-->
+<!--    }-->
+<!--}-->
+<!--</script>-->
+<!--end of callback script-->
+
+<!--latest sign in script-->
+<script>
+    function onSignIn(googleUser) {
         var profile = googleUser.getBasicProfile();
         console.log("ID: " + profile.getId()); // Don't send this directly to your server!
         console.log('Full Name: ' + profile.getName());
@@ -106,12 +127,28 @@ function signInCallback(authResult) {
         console.log('Family Name: ' + profile.getFamilyName());
         console.log("Image URL: " + profile.getImageUrl());
         console.log("Email: " + profile.getEmail());
-
         // The ID token you need to pass to your backend:
         var id_token = googleUser.getAuthResponse().id_token;
         console.log("ID Token: " + id_token);
-      }
-    </script>
+        $.ajax({
+        type: 'POST', //post method to send code to backend
+        url: '/gconnect?state={{STATE}}',  //correspond to gconnect for code exchange
+        // headers: {'X-Requested-With': 'XMLHttpRequest'},   // add header to avoid cfsr attack
+        contentType: 'application/octet-stream; charset=utf-8',
+        processData: false,
+        data: id_token,
+        success: function(result) {
+            if (result) {
+                $('#result').html('Login Successful!</br>' + result + '</br>Redirecting...')
+                setTimeout(function() {window.location.href = '/'}, 4000);
+            }
+        }
+    });
+}
+</script>
+<!--end of sign-in script-->
+
+<!--google sign out script-->
 <script>
   function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
@@ -119,10 +156,16 @@ function signInCallback(authResult) {
       console.log('User signed out.');
     });
   }
+  function onLoad() {
+      gapi.load('auth2', function() {
+          gapi.auth2.init();
+      });
+  }
 </script>
-        <script src="https://apis.google.com/js/platform.js" async defer></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-  <script src="js/script.js"></script>
-</body>
 
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<!--<script src="js/script.js"></script>-->
+
+</body>
 </html>

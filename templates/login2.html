@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block login %}
+<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+<form action=" {{ url_for('login') }} ", method="POST">
+    Username:<input type="text" name="username">
+    <br>
+    Password:<input type="password" name="password">
+    <input type="submit" value="submit">
+</form>
+<br>
+<div id="signinButton" class="g-signin2" data-onsuccess="onSignIn"></div>
+<div id="result"></div>
+{% endblock %}

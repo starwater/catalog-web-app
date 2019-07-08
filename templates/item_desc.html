@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 
 {% block item_desc %}
-<h1>Description:</h1>
         {% for i in item: %}
+        <h1>{{ i.name }}</h1>
+                <strong>Descriptions:</strong>
+                <br>
                 {{ i.description }}
                 {% if 'username' in flask_session and i.author_id==flask_session['user_id'] %}
                         <a href=" {{ url_for('edit', id=i.id) }} ">edit</a>

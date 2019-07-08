@@ -5,10 +5,10 @@
 
 <form action=" {{ url_for('newitem', id=id) }} " method="post">
   Item name:<br>
-  <input type="text" name="name" value="">
+  <input type="text" name="name" value="" required>
   <br>
   Item description:<br>
-  <input type="text" name="desc" value="">
+  <input type="text" name="desc" value="" required>
   <br><br>
   Category:
   <select name="category" id="">

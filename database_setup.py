@@ -38,18 +38,22 @@ class Category_Item(Base):
 
         }
 
+
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
     username = Column(String(80), nullable=False)
     password = Column(String(16), nullable=False)
+    email = Column(String(30))
 
 
-######insert at end of file ###########
-# crate instace of create_engine class and points to the database that we will use
-# it will create a new file similarly to a robust database like mysql, postgre
+# crate instace of create_engine class and points
+# to the database that we will use
+# it will create a new file similarly to a robust
+# database like mysql, postgre
 engine = create_engine('sqlite:///categories.db')
-# goes into the database and add the class we will soon create as new tables in our database
+# goes into the database and add the class we will
+# soon create as new tables in our database
 Base.metadata.create_all(engine)
 
 # print("database setup finished")
