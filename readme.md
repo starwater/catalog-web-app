@@ -23,3 +23,7 @@ Category_Item
 CRUD  
 google signin  
 local register, login/logout
+
+## Update
+2019 July 08 Fix google sign in  -- migrate to latest method
+
